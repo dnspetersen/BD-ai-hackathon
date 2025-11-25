@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-white rounded-lg shadow-md p-6 sticky top-4 z-10">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Requirements</h2>
     
     <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -13,6 +13,19 @@
           required
           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter project name"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Client Name *
+        </label>
+        <input
+          v-model="form.clientName"
+          type="text"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter client name"
         />
       </div>
 
@@ -204,7 +217,7 @@
           type="submit"
           class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-md hover:from-blue-600 hover:to-purple-700 transition shadow-lg"
         >
-          Find Perfect Team
+          🤖 Get AI Recommendations
         </button>
         <button
           type="button"
@@ -228,6 +241,7 @@ const emit = defineEmits<{
 
 const form = ref<ProjectRequirements>({
   projectName: '',
+  clientName: '',
   description: '',
   requiredTechnicalSkills: [],
   requiredSoftSkills: [],
@@ -278,11 +292,11 @@ const removeEducation = (index: number) => {
 
 const handleSubmit = () => {
   if (form.value.requiredTechnicalSkills.length === 0) {
-    alert('Please add at least one technical skill');
+    console.warn('Please add at least one technical skill');
     return;
   }
   if (form.value.requiredSoftSkills.length === 0) {
-    alert('Please add at least one soft skill');
+    console.warn('Please add at least one soft skill');
     return;
   }
   emit('submit', { ...form.value });
@@ -291,6 +305,7 @@ const handleSubmit = () => {
 const resetForm = () => {
   form.value = {
     projectName: '',
+    clientName: '',
     description: '',
     requiredTechnicalSkills: [],
     requiredSoftSkills: [],

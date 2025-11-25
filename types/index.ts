@@ -18,6 +18,7 @@ export interface TeamMember {
 
 export interface ProjectRequirements {
   projectName: string;
+  clientName: string;
   description: string;
   requiredTechnicalSkills: string[];
   requiredSoftSkills: string[];
