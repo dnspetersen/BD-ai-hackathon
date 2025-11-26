@@ -1,42 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
     <!-- Header -->
-    <header class="bg-white shadow-md">
-      <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <NuxtLink to="/" class="inline-block">
-              <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition">
-                AI Team Matcher
-              </h1>
-            </NuxtLink>
-            <p class="text-gray-600 text-sm mt-1">
-              Your saved team recommendations
-            </p>
-          </div>
-          <div class="flex items-center gap-4">
-            <NuxtLink
-              to="/"
-              class="px-4 py-2 text-gray-600 font-semibold hover:text-purple-600 transition"
-            >
-              Home
-            </NuxtLink>
-            <NuxtLink
-              to="/find-team"
-              class="px-4 py-2 text-gray-600 font-semibold hover:text-purple-600 transition"
-            >
-              Find Team
-            </NuxtLink>
-            <NuxtLink
-              to="/team-members"
-              class="px-4 py-2 text-gray-600 font-semibold hover:text-purple-600 transition"
-            >
-              Team Pool
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppNavigation 
+      current-page="saved-results" 
+      subtitle="Your saved team recommendations" 
+    />
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
@@ -80,11 +48,11 @@
         </div>
 
         <!-- Results List -->
-        <div v-else class="space-y-6">
+        <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div
             v-for="result in savedResults"
             :key="result.id"
-            class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden"
+            class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden flex flex-col"
           >
             <!-- Card Header -->
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
@@ -162,6 +130,122 @@
 
               <!-- Team Members (Expandable) -->
               <div v-if="expandedResults.has(result.id)" class="space-y-3">
+                <!-- Coverage Analysis -->
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mt-4 mb-6">
+                  <h5 class="font-semibold text-gray-800 mb-3">Coverage Analysis</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm text-gray-700">Technical Skills</span>
+                        <span class="text-sm font-bold text-blue-600">{{ result.recommendation.coverageAnalysis.technicalSkillsCoverage.toFixed(0) }}%</span>
+                      </div>
+                      <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          class="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all"
+                          :style="{ width: `${result.recommendation.coverageAnalysis.technicalSkillsCoverage}%` }"
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm text-gray-700">Soft Skills</span>
+                        <span class="text-sm font-bold text-green-600">{{ result.recommendation.coverageAnalysis.softSkillsCoverage.toFixed(0) }}%</span>
+                      </div>
+                      <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          class="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all"
+                          :style="{ width: `${result.recommendation.coverageAnalysis.softSkillsCoverage}%` }"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Skills Matching Chips -->
+                  <div class="space-y-3 pt-3 border-t border-purple-200">
+                    <!-- Technical Skills Chips -->
+                    <div>
+                      <p class="text-xs font-medium text-gray-700 mb-2">Required Technical Skills</p>
+                      <div class="flex flex-wrap gap-1.5">
+                        <span
+                          v-for="skill in result.projectRequirements.requiredTechnicalSkills"
+                          :key="skill"
+                          :class="[
+                            'px-2 py-1 rounded text-xs font-medium flex items-center gap-1',
+                            getTeamTechnicalSkills(result).has(skill)
+                              ? 'bg-green-100 text-green-800 border border-green-300'
+                              : 'bg-red-100 text-red-800 border border-red-300'
+                          ]"
+                        >
+                          <svg 
+                            v-if="getTeamTechnicalSkills(result).has(skill)"
+                            class="w-3 h-3" 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                          </svg>
+                          <svg 
+                            v-else
+                            class="w-3 h-3" 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                          </svg>
+                          {{ skill }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Soft Skills Chips -->
+                    <div>
+                      <p class="text-xs font-medium text-gray-700 mb-2">Required Soft Skills</p>
+                      <div class="flex flex-wrap gap-1.5">
+                        <span
+                          v-for="skill in result.projectRequirements.requiredSoftSkills"
+                          :key="skill"
+                          :class="[
+                            'px-2 py-1 rounded text-xs font-medium flex items-center gap-1',
+                            getTeamSoftSkills(result).has(skill)
+                              ? 'bg-green-100 text-green-800 border border-green-300'
+                              : 'bg-red-100 text-red-800 border border-red-300'
+                          ]"
+                        >
+                          <svg 
+                            v-if="getTeamSoftSkills(result).has(skill)"
+                            class="w-3 h-3" 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                          </svg>
+                          <svg 
+                            v-else
+                            class="w-3 h-3" 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                          </svg>
+                          {{ skill }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="flex items-center gap-4 pt-2 text-xs">
+                      <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-gray-600">Covered by team</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-gray-600">Missing skill</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 <h4 class="font-semibold text-gray-800 mb-3">Team Members ({{ result.recommendation.team.length }})</h4>
                 <div
                   v-for="(match, index) in result.recommendation.team"
@@ -221,37 +305,6 @@
                     >
                       +{{ match.member.technicalSkills.length - 5 }}
                     </span>
-                  </div>
-                </div>
-
-                <!-- Coverage Analysis -->
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mt-4">
-                  <h5 class="font-semibold text-gray-800 mb-3">Coverage Analysis</h5>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <div class="flex justify-between items-center mb-1">
-                        <span class="text-sm text-gray-700">Technical Skills</span>
-                        <span class="text-sm font-bold text-blue-600">{{ result.recommendation.coverageAnalysis.technicalSkillsCoverage.toFixed(0) }}%</span>
-                      </div>
-                      <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          class="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all"
-                          :style="{ width: `${result.recommendation.coverageAnalysis.technicalSkillsCoverage}%` }"
-                        ></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div class="flex justify-between items-center mb-1">
-                        <span class="text-sm text-gray-700">Soft Skills</span>
-                        <span class="text-sm font-bold text-green-600">{{ result.recommendation.coverageAnalysis.softSkillsCoverage.toFixed(0) }}%</span>
-                      </div>
-                      <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          class="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all"
-                          :style="{ width: `${result.recommendation.coverageAnalysis.softSkillsCoverage}%` }"
-                        ></div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -314,13 +367,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-      <div class="container mx-auto px-4 py-6">
-        <p class="text-center text-gray-600 text-sm">
-          AI Team Selector - Powered by intelligent matching algorithms
-        </p>
-      </div>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 
@@ -380,6 +427,24 @@ const handleClearAll = () => {
   clearAllResults();
   savedResults.value = [];
   showClearConfirm.value = false;
+};
+
+// Get all technical skills from team members
+const getTeamTechnicalSkills = (result: SavedResult): Set<string> => {
+  const skills = new Set<string>();
+  result.recommendation.team.forEach(match => {
+    match.member.technicalSkills.forEach(skill => skills.add(skill));
+  });
+  return skills;
+};
+
+// Get all soft skills from team members
+const getTeamSoftSkills = (result: SavedResult): Set<string> => {
+  const skills = new Set<string>();
+  result.recommendation.team.forEach(match => {
+    match.member.softSkills.forEach(skill => skills.add(skill));
+  });
+  return skills;
 };
 </script>
 

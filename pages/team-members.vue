@@ -1,42 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
     <!-- Header -->
-    <header class="bg-white shadow-md">
-      <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <NuxtLink to="/" class="inline-block">
-              <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition">
-                AI Team Matcher
-              </h1>
-            </NuxtLink>
-            <p class="text-gray-600 text-sm mt-1">
-              Browse and manage all available team members
-            </p>
-          </div>
-          <div class="flex items-center gap-4">
-            <NuxtLink
-              to="/"
-              class="px-4 py-2 text-gray-600 font-semibold hover:text-purple-600 transition"
-            >
-              Home
-            </NuxtLink>
-            <NuxtLink
-              to="/saved-results"
-              class="px-4 py-2 text-gray-600 font-semibold hover:text-purple-600 transition"
-            >
-              Saved Results
-            </NuxtLink>
-            <NuxtLink
-              to="/find-team"
-              class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-md hover:from-blue-600 hover:to-purple-700 transition shadow-lg"
-            >
-              Find Team
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppNavigation 
+      current-page="team-members" 
+      subtitle="Browse and manage all available team members" 
+    />
 
     <!-- Main Content with Sidebar -->
     <div class="flex container mx-auto px-4 py-8 gap-6">
@@ -326,13 +294,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16">
-      <div class="container mx-auto px-4 py-6">
-        <p class="text-center text-gray-600 text-sm">
-          AI Team Selector - Powered by intelligent matching algorithms
-        </p>
-      </div>
-    </footer>
+    <AppFooter />
   </div>
 </template>
 

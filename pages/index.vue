@@ -1,38 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-      <div class="container mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-              </svg>
-            </div>
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AI Team Matcher
-            </h1>
-          </div>
-          <div class="flex items-center gap-4">
-            <a href="#features" class="text-gray-600 hover:text-purple-600 transition font-medium">Features</a>
-            <a href="#benefits" class="text-gray-600 hover:text-purple-600 transition font-medium">Benefits</a>
-            <NuxtLink
-              to="/saved-results"
-              class="text-gray-600 hover:text-purple-600 transition font-medium"
-            >
-              Saved Results
-            </NuxtLink>
-            <NuxtLink
-              to="/find-team"
-              class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              Get Started
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppNavigation current-page="home" />
 
     <!-- Hero Section -->
     <section class="container mx-auto px-4 py-20">
@@ -350,45 +319,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div class="col-span-1 md:col-span-2">
-              <div class="flex items-center gap-2 mb-4">
-                <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"></div>
-                <h3 class="text-xl font-bold text-white">AI Team Matcher</h3>
-              </div>
-              <p class="text-gray-400 mb-4">
-                Intelligent team selection powered by advanced AI. Build the perfect team for every project.
-              </p>
-            </div>
-            <div>
-              <h4 class="text-white font-semibold mb-4">Product</h4>
-              <ul class="space-y-2">
-                <li><a href="#features" class="hover:text-white transition">Features</a></li>
-                <li><a href="#benefits" class="hover:text-white transition">Benefits</a></li>
-                <li><NuxtLink to="/find-team" class="hover:text-white transition">Find Team</NuxtLink></li>
-                <li><NuxtLink to="/saved-results" class="hover:text-white transition">Saved Results</NuxtLink></li>
-                <li><NuxtLink to="/team-members" class="hover:text-white transition">Team Pool</NuxtLink></li>
-              </ul>
-            </div>
-            <div>
-              <h4 class="text-white font-semibold mb-4">Company</h4>
-              <ul class="space-y-2">
-                <li><a href="#" class="hover:text-white transition">About Us</a></li>
-                <li><a href="#" class="hover:text-white transition">Contact</a></li>
-                <li><a href="#" class="hover:text-white transition">Privacy</a></li>
-                <li><a href="#" class="hover:text-white transition">Terms</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="border-t border-gray-800 pt-8 text-center">
-            <p>&copy; 2025 AI Team Matcher. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <AppFooter variant="full" />
   </div>
 </template>
 
