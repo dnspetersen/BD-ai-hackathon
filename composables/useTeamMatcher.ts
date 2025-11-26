@@ -255,6 +255,120 @@ export const useTeamMatcher = () => {
       ).length / requirements.requiredSoftSkills.length
     ) * 100;
     
+    // Generate pros and cons
+    const pros: string[] = [];
+    const cons: string[] = [];
+    
+    // Analyze pros
+    if (totalScore >= 90) {
+      pros.push('Exceptional overall team match score');
+    } else if (totalScore >= 80) {
+      pros.push('Strong overall team match score');
+    }
+    
+    if (technicalSkillsCoverage === 100) {
+      pros.push('Complete coverage of all required technical skills');
+    } else if (technicalSkillsCoverage >= 80) {
+      pros.push('Excellent technical skills coverage');
+    }
+    
+    if (softSkillsCoverage === 100) {
+      pros.push('Complete coverage of all required soft skills');
+    } else if (softSkillsCoverage >= 80) {
+      pros.push('Strong soft skills coverage');
+    }
+    
+    if (totalCost <= requirements.maxBudget * 0.85) {
+      const savings = requirements.maxBudget - totalCost;
+      pros.push(`Well under budget with $${(savings / 1000).toFixed(0)}K savings`);
+    } else if (totalCost <= requirements.maxBudget) {
+      pros.push('Within project budget');
+    }
+    
+    const avgExperience = selectedTeam.reduce((sum, m) => sum + m.member.experienceYears, 0) / selectedTeam.length;
+    if (avgExperience >= requirements.minExperienceYears + 3) {
+      pros.push(`Highly experienced team (avg ${avgExperience.toFixed(1)} years)`);
+    } else if (avgExperience >= requirements.minExperienceYears + 1) {
+      pros.push(`Experienced team (avg ${avgExperience.toFixed(1)} years)`);
+    }
+    
+    if (Object.keys(roleCount).length >= Math.min(requirements.teamSize, 4)) {
+      pros.push('Diverse role distribution for balanced team dynamics');
+    }
+    
+    const allAvailable = selectedTeam.every(m => m.member.availability === 'available');
+    if (allAvailable) {
+      pros.push('All team members are immediately available');
+    }
+    
+    // Analyze cons
+    if (totalScore < 70) {
+      cons.push('Overall match score below ideal threshold');
+    }
+    
+    if (technicalSkillsCoverage < 100) {
+      const missing = requirements.requiredTechnicalSkills.filter(skill =>
+        !Array.from(allTechnicalSkills).some(ts => 
+          ts.toLowerCase().includes(skill.toLowerCase()) ||
+          skill.toLowerCase().includes(ts.toLowerCase())
+        )
+      );
+      if (missing.length > 0) {
+        cons.push(`Missing technical skills: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
+      }
+    }
+    
+    if (softSkillsCoverage < 100) {
+      const missing = requirements.requiredSoftSkills.filter(skill =>
+        !Array.from(allSoftSkills).some(ss =>
+          ss.toLowerCase().includes(skill.toLowerCase()) ||
+          skill.toLowerCase().includes(ss.toLowerCase())
+        )
+      );
+      if (missing.length > 0) {
+        cons.push(`Missing soft skills: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
+      }
+    }
+    
+    if (totalCost > requirements.maxBudget) {
+      const overage = totalCost - requirements.maxBudget;
+      cons.push(`Over budget by $${(overage / 1000).toFixed(0)}K (${((overage / requirements.maxBudget) * 100).toFixed(1)}%)`);
+    } else if (totalCost > requirements.maxBudget * 0.95) {
+      cons.push('Very close to maximum budget with limited flexibility');
+    }
+    
+    if (avgExperience < requirements.minExperienceYears) {
+      cons.push(`Team experience below requirement (avg ${avgExperience.toFixed(1)} vs ${requirements.minExperienceYears} years needed)`);
+    }
+    
+    const limitedAvailability = selectedTeam.filter(m => m.member.availability === 'limited');
+    if (limitedAvailability.length > 0) {
+      cons.push(`${limitedAvailability.length} team member${limitedAvailability.length > 1 ? 's' : ''} with limited availability`);
+    }
+    
+    const unavailable = selectedTeam.filter(m => m.member.availability === 'unavailable');
+    if (unavailable.length > 0) {
+      cons.push(`${unavailable.length} team member${unavailable.length > 1 ? 's are' : ' is'} currently unavailable`);
+    }
+    
+    if (Object.keys(roleCount).length < 3 && requirements.teamSize >= 4) {
+      cons.push('Limited role diversity may create bottlenecks');
+    }
+    
+    const lowScorers = selectedTeam.filter(m => m.score < 70);
+    if (lowScorers.length > 0) {
+      cons.push(`${lowScorers.length} team member${lowScorers.length > 1 ? 's have' : ' has'} below-average match scores`);
+    }
+    
+    // Ensure we have at least some feedback
+    if (pros.length === 0) {
+      pros.push('Team meets basic project requirements');
+    }
+    
+    if (cons.length === 0) {
+      cons.push('No significant concerns identified');
+    }
+    
     return {
       team: selectedTeam,
       totalScore,
@@ -263,7 +377,9 @@ export const useTeamMatcher = () => {
         technicalSkillsCoverage,
         softSkillsCoverage,
         roleDistribution: roleCount
-      }
+      },
+      pros,
+      cons
     };
   };
 

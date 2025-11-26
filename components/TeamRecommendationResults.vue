@@ -39,6 +39,57 @@
       </div>
     </div>
 
+    <!-- Pros and Cons Analysis -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Pros -->
+      <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-5 border-2 border-green-200">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <h3 class="font-bold text-green-900">Strengths</h3>
+        </div>
+        <ul class="space-y-2">
+          <li
+            v-for="(pro, index) in recommendation.pros"
+            :key="index"
+            class="flex items-start gap-2 text-sm text-green-800"
+          >
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ pro }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cons -->
+      <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-5 border-2 border-orange-200">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <h3 class="font-bold text-orange-900">Considerations</h3>
+        </div>
+        <ul class="space-y-2">
+          <li
+            v-for="(con, index) in recommendation.cons"
+            :key="index"
+            class="flex items-start gap-2 text-sm text-orange-800"
+          >
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ con }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Team Members -->
     <div class="space-y-4">
       <h3 class="font-semibold text-gray-800 mb-4">Team Members</h3>
@@ -410,6 +461,115 @@ const replaceMember = (index: number, newMatch: TeamMatch) => {
     ? (requiredSoftSkills.filter(skill => allSoftSkills.has(skill)).length / requiredSoftSkills.length) * 100
     : 0;
 
+  // Generate pros and cons
+  const pros: string[] = [];
+  const cons: string[] = [];
+  
+  if (!props.requirements) {
+    pros.push('Team updated successfully');
+  } else {
+    const req = props.requirements;
+    
+    // Pros analysis
+    if (totalScore >= 90) {
+      pros.push('Exceptional overall team match score');
+    } else if (totalScore >= 80) {
+      pros.push('Strong overall team match score');
+    }
+    
+    if (techCoverage === 100) {
+      pros.push('Complete coverage of all required technical skills');
+    } else if (techCoverage >= 80) {
+      pros.push('Excellent technical skills coverage');
+    }
+    
+    if (softCoverage === 100) {
+      pros.push('Complete coverage of all required soft skills');
+    } else if (softCoverage >= 80) {
+      pros.push('Strong soft skills coverage');
+    }
+    
+    if (totalCost <= req.maxBudget * 0.85) {
+      const savings = req.maxBudget - totalCost;
+      pros.push(`Well under budget with $${(savings / 1000).toFixed(0)}K savings`);
+    } else if (totalCost <= req.maxBudget) {
+      pros.push('Within project budget');
+    }
+    
+    const avgExperience = newTeam.reduce((sum, m) => sum + m.member.experienceYears, 0) / newTeam.length;
+    if (avgExperience >= req.minExperienceYears + 3) {
+      pros.push(`Highly experienced team (avg ${avgExperience.toFixed(1)} years)`);
+    } else if (avgExperience >= req.minExperienceYears + 1) {
+      pros.push(`Experienced team (avg ${avgExperience.toFixed(1)} years)`);
+    }
+    
+    if (Object.keys(roleDistribution).length >= Math.min(req.teamSize, 4)) {
+      pros.push('Diverse role distribution for balanced team dynamics');
+    }
+    
+    const allAvailable = newTeam.every(m => m.member.availability === 'available');
+    if (allAvailable) {
+      pros.push('All team members are immediately available');
+    }
+    
+    // Cons analysis
+    if (totalScore < 70) {
+      cons.push('Overall match score below ideal threshold');
+    }
+    
+    if (techCoverage < 100) {
+      const missing = requiredTechSkills.filter(skill => !allTechnicalSkills.has(skill));
+      if (missing.length > 0) {
+        cons.push(`Missing technical skills: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
+      }
+    }
+    
+    if (softCoverage < 100) {
+      const missing = requiredSoftSkills.filter(skill => !allSoftSkills.has(skill));
+      if (missing.length > 0) {
+        cons.push(`Missing soft skills: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
+      }
+    }
+    
+    if (totalCost > req.maxBudget) {
+      const overage = totalCost - req.maxBudget;
+      cons.push(`Over budget by $${(overage / 1000).toFixed(0)}K (${((overage / req.maxBudget) * 100).toFixed(1)}%)`);
+    } else if (totalCost > req.maxBudget * 0.95) {
+      cons.push('Very close to maximum budget with limited flexibility');
+    }
+    
+    if (avgExperience < req.minExperienceYears) {
+      cons.push(`Team experience below requirement (avg ${avgExperience.toFixed(1)} vs ${req.minExperienceYears} years needed)`);
+    }
+    
+    const limitedAvailability = newTeam.filter(m => m.member.availability === 'limited');
+    if (limitedAvailability.length > 0) {
+      cons.push(`${limitedAvailability.length} team member${limitedAvailability.length > 1 ? 's' : ''} with limited availability`);
+    }
+    
+    const unavailable = newTeam.filter(m => m.member.availability === 'unavailable');
+    if (unavailable.length > 0) {
+      cons.push(`${unavailable.length} team member${unavailable.length > 1 ? 's are' : ' is'} currently unavailable`);
+    }
+    
+    if (Object.keys(roleDistribution).length < 3 && req.teamSize >= 4) {
+      cons.push('Limited role diversity may create bottlenecks');
+    }
+    
+    const lowScorers = newTeam.filter(m => m.score < 70);
+    if (lowScorers.length > 0) {
+      cons.push(`${lowScorers.length} team member${lowScorers.length > 1 ? 's have' : ' has'} below-average match scores`);
+    }
+    
+    if (pros.length === 0) {
+      pros.push('Team meets basic project requirements');
+    }
+    
+    if (cons.length === 0) {
+      cons.push('No significant concerns identified');
+    }
+  }
+
   const newRecommendation: TeamRecommendation = {
     team: newTeam,
     totalScore,
@@ -418,7 +578,9 @@ const replaceMember = (index: number, newMatch: TeamMatch) => {
       technicalSkillsCoverage: techCoverage,
       softSkillsCoverage: softCoverage,
       roleDistribution
-    }
+    },
+    pros,
+    cons
   };
 
   emit('update-recommendation', newRecommendation);

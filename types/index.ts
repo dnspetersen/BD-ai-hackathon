@@ -51,6 +51,8 @@ export interface TeamRecommendation {
     softSkillsCoverage: number;
     roleDistribution: Record<string, number>;
   };
+  pros: string[];
+  cons: string[];
 }
 
 

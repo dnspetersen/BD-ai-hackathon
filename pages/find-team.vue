@@ -8,12 +8,36 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
+      <!-- Editing Notification -->
+      <div v-if="initialProjectData" class="max-w-7xl mx-auto mb-6">
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-blue-900">Editing Saved Project</h3>
+            <p class="text-sm text-blue-700">The form has been pre-filled with data from your saved result. Make any changes and get new AI recommendations.</p>
+          </div>
+          <button
+            @click="initialProjectData = null"
+            class="text-blue-500 hover:text-blue-700 p-1"
+            title="Dismiss"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
         <!-- Left Column: Project Requirements -->
         <div class="space-y-6">
           <ProjectRequirementsForm 
             :key="formKey"
+            :initial-values="initialProjectData"
             @submit="handleRequirementsUpdate" 
           />
         </div>
@@ -89,9 +113,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import type { ProjectRequirements, TeamMember, TeamRecommendation } from '../types/index';
 import { useSampleData } from '../composables/useSampleData';
+import { useProjectEdit } from '../composables/useProjectEdit';
 
 // State
 const projectRequirements = ref<ProjectRequirements | null>(null);
@@ -100,10 +125,23 @@ const loading = ref(false);
 const error = ref('');
 const autoUpdate = ref(true);
 const formKey = ref(0);
+const initialProjectData = ref<ProjectRequirements | null>(null);
 
 // Load sample data
 const { sampleTeamMembers } = useSampleData();
 const teamMembers = ref<TeamMember[]>(sampleTeamMembers);
+
+// Check for project to edit
+const { getProjectToEdit, clearProjectToEdit } = useProjectEdit();
+
+onMounted(() => {
+  const projectToEdit = getProjectToEdit();
+  if (projectToEdit) {
+    initialProjectData.value = projectToEdit;
+    // Clear the edit state after loading
+    clearProjectToEdit();
+  }
+});
 
 // Computed
 const hasRequirements = computed(() => {

@@ -1,6 +1,17 @@
 <template>
   <div class="bg-white rounded-lg shadow-md p-6 sticky top-4 z-10">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Requirements</h2>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Project Requirements</h2>
+      <span
+        v-if="initialValues"
+        class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full flex items-center gap-1"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+        </svg>
+        Editing
+      </span>
+    </div>
     
     <form @submit.prevent="handleSubmit" class="space-y-4">
       <div>
@@ -232,8 +243,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import type { ProjectRequirements } from '../types/index';
+
+const props = defineProps<{
+  initialValues?: ProjectRequirements | null;
+}>();
 
 const emit = defineEmits<{
   submit: [requirements: ProjectRequirements];
@@ -255,6 +270,27 @@ const form = ref<ProjectRequirements>({
 const newTechnicalSkill = ref('');
 const newSoftSkill = ref('');
 const newEducation = ref('');
+
+// Load initial values if provided
+const loadInitialValues = (values: ProjectRequirements) => {
+  form.value = {
+    ...values,
+    preferredEducation: values.preferredEducation || []
+  };
+};
+
+// Watch for initial values changes
+watch(() => props.initialValues, (newValues) => {
+  if (newValues) {
+    loadInitialValues(newValues);
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  if (props.initialValues) {
+    loadInitialValues(props.initialValues);
+  }
+});
 
 const addTechnicalSkill = () => {
   if (newTechnicalSkill.value.trim()) {

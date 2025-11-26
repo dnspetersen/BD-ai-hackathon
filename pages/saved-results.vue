@@ -74,15 +74,26 @@
                     </span>
                   </div>
                 </div>
-                <button
-                  @click="deleteResultConfirm(result.id)"
-                  class="p-2 hover:bg-white/20 rounded-lg transition"
-                  title="Delete"
-                >
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                </button>
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="editProject(result.projectRequirements)"
+                    class="p-2 hover:bg-white/20 rounded-lg transition"
+                    title="Edit Project"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  <button
+                    @click="deleteResultConfirm(result.id)"
+                    class="p-2 hover:bg-white/20 rounded-lg transition"
+                    title="Delete"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -111,25 +122,87 @@
                 </div>
               </div>
 
-              <!-- Toggle Details Button -->
-              <button
-                @click="toggleDetails(result.id)"
-                class="w-full mb-4 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2"
-              >
-                <span>{{ expandedResults.has(result.id) ? 'Hide' : 'Show' }} Team Details</span>
-                <svg
-                  class="w-4 h-4 transition-transform"
-                  :class="{ 'rotate-180': expandedResults.has(result.id) }"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <!-- Action Buttons -->
+              <div class="flex gap-3 mb-4">
+                <button
+                  @click="editProject(result.projectRequirements)"
+                  class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-purple-700 transition flex items-center justify-center gap-2 shadow-md"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </button>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                  <span>Edit Project</span>
+                </button>
+                <button
+                  @click="toggleDetails(result.id)"
+                  class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                >
+                  <span>{{ expandedResults.has(result.id) ? 'Hide' : 'Show' }} Details</span>
+                  <svg
+                    class="w-4 h-4 transition-transform"
+                    :class="{ 'rotate-180': expandedResults.has(result.id) }"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+              </div>
 
               <!-- Team Members (Expandable) -->
               <div v-if="expandedResults.has(result.id)" class="space-y-3">
+                <!-- Pros and Cons -->
+                <div v-if="result.recommendation.pros || result.recommendation.cons" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <!-- Pros -->
+                  <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </div>
+                      <h5 class="font-semibold text-green-900 text-sm">Strengths</h5>
+                    </div>
+                    <ul class="space-y-1.5">
+                      <li
+                        v-for="(pro, index) in result.recommendation.pros"
+                        :key="index"
+                        class="flex items-start gap-2 text-xs text-green-800"
+                      >
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>{{ pro }}</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Cons -->
+                  <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200">
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                      </div>
+                      <h5 class="font-semibold text-orange-900 text-sm">Considerations</h5>
+                    </div>
+                    <ul class="space-y-1.5">
+                      <li
+                        v-for="(con, index) in result.recommendation.cons"
+                        :key="index"
+                        class="flex items-start gap-2 text-xs text-orange-800"
+                      >
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>{{ con }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
                 <!-- Coverage Analysis -->
                 <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mt-4 mb-6">
                   <h5 class="font-semibold text-gray-800 mb-3">Coverage Analysis</h5>
@@ -373,10 +446,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useSavedResults } from '../composables/useSavedResults';
+import { useProjectEdit } from '../composables/useProjectEdit';
 import type { SavedResult } from '../composables/useSavedResults';
+import type { ProjectRequirements } from '../types';
 
 const { getSavedResults, deleteResult, clearAllResults } = useSavedResults();
+const { setProjectToEdit } = useProjectEdit();
+const router = useRouter();
 
 const savedResults = ref<SavedResult[]>([]);
 const expandedResults = ref<Set<string>>(new Set());
@@ -395,6 +473,12 @@ const toggleDetails = (id: string) => {
   } else {
     expandedResults.value.add(id);
   }
+};
+
+// Edit project - navigate to find-team page with data pre-filled
+const editProject = (projectRequirements: ProjectRequirements) => {
+  setProjectToEdit(projectRequirements);
+  router.push('/find-team');
 };
 
 // Format date
