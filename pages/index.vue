@@ -22,7 +22,7 @@
             </h1>
             
             <p class="text-xl text-gray-600 leading-relaxed">
-              Transform your hiring process with intelligent team matching. Our AI analyzes skills, experience, and budget to recommend the perfect team for your next project.
+              Release the best teams faster with intelligent team matching. Our AI analyzes skills, experience, and budget to recommend the perfect team for your next project.
             </p>
             
             <div class="flex gap-4 pt-4">
@@ -181,7 +181,7 @@
                   </svg>
                   <div>
                     <p class="font-semibold text-gray-900">70% Faster Screening</p>
-                    <p class="text-gray-600 text-sm">Reduce manual screening time from days to minutes with automated candidate matching</p>
+                    <p class="text-gray-600 text-sm">Reduce manual screening time from days to minutes with automated profile matching</p>
                   </div>
                 </li>
                 <li class="flex gap-3">
